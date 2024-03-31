@@ -20,9 +20,9 @@ function CatanBoard({pointA, desert, boardSize = 5}: CatanProps) {
       Top buildable spots:
       {catan.buildSpots.map((row, num) => (
         <div key={`build_${num}`}>
-        {row.join(' - ')}
-        <br/>
-      </div>
+          {row.join(' - ')}
+          <br/>
+        </div>
       ))}
     </div>
   )

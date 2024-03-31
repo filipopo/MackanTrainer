@@ -10,9 +10,13 @@ export function App() {
 
   return (
     <>
+      Point A<br/>
       <Input variable={pointA} setVariable={setPointA}
         allowedValues={['0 0', '2 0', '4 0', '4 2', '2 4', '0 2']} />
+
+      Desert index<br/>
       <Input variable={desert} setVariable={setDesert} />
+
       <CatanBoard pointA={pointA} desert={desert} />
     </>
   )
