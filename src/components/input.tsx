@@ -1,10 +1,13 @@
-interface InputProps {
-  variable: number[]
+interface Input {
   setVariable: Function
+}
+
+interface TextProps extends Input {
+  variable: number[]
   allowedValues?: string[]
 }
 
-function Input({variable, setVariable, allowedValues}: InputProps) {
+export function TextInput({variable, setVariable, allowedValues}: TextProps) {
   return (
     <>
       <input
@@ -25,4 +28,27 @@ function Input({variable, setVariable, allowedValues}: InputProps) {
   )
 }
 
-export default Input
+interface CheckboxProps extends Input {
+  variable: string[]
+  id: string
+}
+
+export function CheckboxInput({id, variable, setVariable}: CheckboxProps) {
+  return (
+    <>
+      <input
+        type="checkbox"
+        id={id}
+        onClick={e => {
+          let checked = (e.target as HTMLInputElement).checked
+
+          if (checked)
+            setVariable([...variable, id])
+          else
+            setVariable(variable.filter(item => item !== id))
+        }}
+      />
+      <label for={id}>{id}</label>
+    </>
+  )
+}

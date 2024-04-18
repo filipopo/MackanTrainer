@@ -1,18 +1,23 @@
+import CatanHex from '../lib/catan_hex'
+import CatanField from '../lib/catan_field'
+
+type Extensions = '6p' | 'ck' | 'sf'
+
 interface CatanProps {
   pointA: number[]
   desert: number[]
-  boardSize?: number
+  extensions?: Extensions[]
 }
 
-function CatanBoard({pointA, desert, boardSize = 5}: CatanProps) {
-  const catan = new Catan({pointA, desert, boardSize})
+function CatanBoard({pointA, desert, extensions = []}: CatanProps) {
+  const catan = new Catan({pointA, desert, extensions})
 
   return (
     <div className='card'>
       The Catan board:
       {catan.board.map((row, num) => (
         <div key={`board_${num}`}>
-          {row.join(' ')}
+          {row.map(hex => hex.number).join(' ')}
           <br/>
         </div>
       ))}
@@ -29,20 +34,16 @@ function CatanBoard({pointA, desert, boardSize = 5}: CatanProps) {
 }
 
 class Catan {
-  public board: Array<number>[] = []
-  public buildSpots: [string, number][] = []
+  public constructor({pointA, desert, extensions = []}: CatanProps) {
+    const boardSize = extensions.includes('6p') ? 6 : 5
 
-  public constructor({pointA, desert, boardSize = 5}: CatanProps) {
-    for (let i = 3; i < boardSize; i++)
-      this.board.push(Array(i).fill(0))
-
-    for (let i = boardSize; i >= 3; i--)
-      this.board.push(Array(i).fill(0))
-
+    this.board = CatanField.makeBoard(boardSize)
     this.fillBoard(pointA, desert)
     this.makeBuildSpots()
-
   }
+
+  public board: Array<CatanHex>[]
+  public buildSpots: [string, number][] = []
 
   private pointMapping: {[k: string]: number} = {
     'a': 5,
@@ -229,7 +230,7 @@ class Catan {
         i--; continue
       }
 
-      this.board[row][col] = this.pointMapping[String.fromCharCode(97 + i)];
+      this.board[row][col].number = this.pointMapping[String.fromCharCode(97 + i)];
       moveSpiral()
     }
   }
@@ -241,14 +242,14 @@ class Catan {
 
       for (let cords of combination) {
           const [row, col] = cords
-          key += `${this.board[row][col]} `
+          key += `${this.board[row][col].number} `
 
-          if (this.board[row][col])
-            value += 6 - Math.abs(this.board[row][col] - 7)
+          if (this.board[row][col].number)
+            value += 6 - Math.abs(this.board[row][col].number - 7)
       }
 
       value = +(value / 36 * 100).toFixed(2)
-      this.buildSpots.push([key.trim(), value])
+      this.buildSpots.push([key.trimEnd(), value])
     }
 
     this.buildSpots.sort((first, second) => second[1] - first[1])

@@ -14,3 +14,5 @@ This project is based on the `preact + TypeScript + Vite` template
 ```
 npm create vite@latest CatanTrainer -- --template preact-ts
 ```
+
+Thanks to https://www.redblobgames.com/grids/hexagons/
