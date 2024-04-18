@@ -26,6 +26,22 @@ class HexField {
 
     return false
   }
+
+  public inward_spiral(hex: Hex, direction = 4) {
+    const path = []
+
+    for (let i = 0; i < 6; i++) {
+      let next_hex: Hex | false = hex
+      while (next_hex = this.getHex(...next_hex.neighbor(direction))) {
+        hex = next_hex
+        path.push(hex)
+      }
+
+      direction++
+    }
+
+    return path
+  }
 }
 
 export default HexField

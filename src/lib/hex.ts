@@ -17,6 +17,10 @@ class Hex {
     [0, 1, -1]
   ]
 
+  public static direction(direction: number) {
+    return Hex.directions[direction > 5 ? direction - 6 : direction]
+  }
+
   public equals(target: Hex) {
     return this.cords.every((e, i) => e === target.cords[i])
   }
@@ -30,7 +34,7 @@ class Hex {
   }
 
   public neighbor(direction: number) {
-    return this.add(Hex.directions[direction])
+    return this.add(Hex.direction(direction))
   }
 
   public len() {
