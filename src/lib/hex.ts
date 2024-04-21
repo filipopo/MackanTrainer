@@ -18,7 +18,8 @@ class Hex {
   ]
 
   public static direction(direction: number) {
-    return Hex.directions[direction > 5 ? direction - 6 : direction]
+    while (direction > 5) direction -= 6
+    return Hex.directions[direction]
   }
 
   public equals(target: Hex) {
@@ -54,4 +55,4 @@ class Hex {
   }
 }
 
-export default Hex
+export { Hex as default, type Cords }

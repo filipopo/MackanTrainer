@@ -1,26 +1,26 @@
 interface Input {
+  variable: number[] | string[]
   setVariable: Function
 }
 
 interface TextProps extends Input {
-  variable: number[]
-  allowedValues?: string[]
+  validator?: Function
 }
 
-export function TextInput({variable, setVariable, allowedValues}: TextProps) {
+export function TextInput({variable, setVariable, validator}: TextProps) {
   return (
     <>
       <input
         type="text"
         value={variable.join(' ')}
         onChange={e => {
-          let cords: string | string[] = (e.target as HTMLInputElement).value
-          if (allowedValues && !allowedValues.includes(cords))
+          let el: string | string[] = (e.target as HTMLInputElement).value
+          if (validator && !validator(el))
             return
 
-          cords = cords.split(' ')
-          if (cords.length === 2 && cords.every(e => !Number.isNaN(Number(e))))
-            setVariable(cords.map(str => Number(str)))
+          el = el.split(' ')
+          if (el.every(e => !Number.isNaN(Number(e))))
+            setVariable(el.map(str => Number(str)))
         }}
       />
       <br/>
@@ -28,8 +28,32 @@ export function TextInput({variable, setVariable, allowedValues}: TextProps) {
   )
 }
 
+interface TextArrayProps extends TextProps {
+  length: number
+}
+
+export function TextArrayInput({variable, setVariable, validator, length}: TextArrayProps) {
+  const fields = new Array(length).fill(variable)
+
+  function handleChange(index: number, value: string) {
+    fields[index] = value
+    setVariable(fields)
+  }
+
+  return (
+    <div>
+      {fields.map((value, index) => (
+        <TextInput
+          variable={value}
+          setVariable={(text: string) => handleChange(index, text)}
+          validator={validator}
+        />
+      ))}
+    </div>
+  )
+}
+
 interface CheckboxProps extends Input {
-  variable: string[]
   id: string
 }
 
