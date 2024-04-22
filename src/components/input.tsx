@@ -1,13 +1,13 @@
 interface Input {
-  variable: number[] | string[]
   setVariable: Function
 }
 
 interface TextProps extends Input {
+  variable: number[]
   validator?: Function
 }
 
-export function TextInput({variable, setVariable, validator}: TextProps) {
+function TextInput({variable, setVariable, validator}: TextProps) {
   return (
     <>
       <input
@@ -15,8 +15,7 @@ export function TextInput({variable, setVariable, validator}: TextProps) {
         value={variable.join(' ')}
         onChange={e => {
           let el: string | string[] = (e.target as HTMLInputElement).value
-          if (validator && !validator(el))
-            return
+          if (validator && !validator(el)) return
 
           el = el.split(' ')
           if (el.every(e => !Number.isNaN(Number(e))))
@@ -28,25 +27,20 @@ export function TextInput({variable, setVariable, validator}: TextProps) {
   )
 }
 
-interface TextArrayProps extends TextProps {
+interface TextArrayProps extends Input {
+  variable: number[][]
   length: number
 }
 
-export function TextArrayInput({variable, setVariable, validator, length}: TextArrayProps) {
-  const fields = new Array(length).fill(variable)
-
-  function handleChange(index: number, value: string) {
-    fields[index] = value
-    setVariable(fields)
-  }
+function TextArrayInput({variable, setVariable, length}: TextArrayProps) {
+  const fields = Array.from({ length }, (_, index) => variable[index] || variable[0])
 
   return (
     <div>
       {fields.map((value, index) => (
         <TextInput
           variable={value}
-          setVariable={(text: string) => handleChange(index, text)}
-          validator={validator}
+          setVariable={(cords: number[]) => {fields[index] = cords; setVariable(fields)}}
         />
       ))}
     </div>
@@ -54,25 +48,25 @@ export function TextArrayInput({variable, setVariable, validator, length}: TextA
 }
 
 interface CheckboxProps extends Input {
+  variable: string[]
   id: string
 }
 
-export function CheckboxInput({id, variable, setVariable}: CheckboxProps) {
+function CheckboxInput({id, variable, setVariable}: CheckboxProps) {
   return (
     <>
       <input
         type="checkbox"
         id={id}
         onClick={e => {
-          let checked = (e.target as HTMLInputElement).checked
-
-          if (checked)
-            setVariable([...variable, id])
-          else
-            setVariable(variable.filter(item => item !== id))
+          const checked = (e.target as HTMLInputElement).checked
+          if (checked) setVariable([...variable, id])
+          else setVariable(variable.filter(item => item !== id))
         }}
       />
       <label for={id}>{id}</label>
     </>
   )
 }
+
+export {TextInput, TextArrayInput, CheckboxInput}

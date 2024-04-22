@@ -42,7 +42,7 @@ class HexField {
 
         while (
           (next_hex = this.getHex(...next_hex.neighbor(direction))) &&
-          path.every(hex => (hex.cords.some((e, i) => e !== (next_hex as Hex).cords[i])))
+          path.every(hex => hex.cords.some((e, i) => e !== (next_hex as Hex).cords[i]))
         ) {
           hex = next_hex
           path.push(hex)
