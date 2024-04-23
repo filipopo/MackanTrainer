@@ -29,31 +29,30 @@ function TextInput({variable, setVariable, validator}: TextProps) {
 
 interface TextArrayProps extends Input {
   variable: number[][]
-  length: number
 }
 
-function TextArrayInput({variable, setVariable, length}: TextArrayProps) {
-  const fields = Array.from({ length }, (_, index) => variable[index])
+function TextArrayInput({variable, setVariable}: TextArrayProps) {
+  const fields = Array.from({ length: variable.length }, (_, index) => variable[index])
 
   return (
-    <div>
+    <>
       {fields.map((value, index) => (
         <TextInput
           variable={value}
           setVariable={(cords: number[]) => {fields[index] = cords; setVariable(fields)}}
         />
       ))}
-    </div>
+    </>
   )
 }
 
 interface CheckboxProps extends Input {
   variable: string[]
   id: string
-  handlers: {[k: string]: (c: boolean) => void}
+  handler?: (c: boolean) => void
 }
 
-function CheckboxInput({id, variable, setVariable, handlers}: CheckboxProps) {
+function CheckboxInput({id, variable, setVariable, handler}: CheckboxProps) {
   return (
     <>
       <input
@@ -61,7 +60,7 @@ function CheckboxInput({id, variable, setVariable, handlers}: CheckboxProps) {
         id={id}
         onClick={el => {
           const checked = (el.target as HTMLInputElement).checked
-          if (handlers[id]) handlers[id](checked)
+          if (handler) handler(checked)
 
           if (checked) setVariable([...variable, id])
           else setVariable(variable.filter(item => item !== id))
