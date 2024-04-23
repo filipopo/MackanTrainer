@@ -10,8 +10,6 @@ export function App() {
   const [extensions, setExtensions] = useState<Extension[]>([])
 
   const catan = new Catan({pointA, deserts, extensions})
-  const d_count = extensions.includes('6p') ? 2 : 1
-
   return (
     <>
       Point A<br/>
@@ -19,11 +17,13 @@ export function App() {
         validator={(el: string) => catan.field.dirMap().includes(el)} />
 
       Desert indexes<br/>
-      <TextArrayInput variable={deserts} setVariable={setDeserts} length={d_count} />
+      <TextArrayInput variable={deserts} setVariable={setDeserts} length={deserts.length} />
 
       Extensions:<br/>
       {['6p', 'ck', 'sf'].map(id => (
-        <CheckboxInput id={id} variable={extensions} setVariable={setExtensions} />
+        <CheckboxInput id={id} variable={extensions} setVariable={setExtensions} handlers={{
+          '6p': c => {c ? setDeserts(Array(2).fill(deserts[0])) : setDeserts(deserts.slice(0, 1))}
+        }} />
       ))}
 
       <CatanBoard catan={catan} />

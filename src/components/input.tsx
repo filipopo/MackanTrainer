@@ -1,10 +1,10 @@
 interface Input {
-  setVariable: Function
+  setVariable: (el: any) => void
 }
 
 interface TextProps extends Input {
   variable: number[]
-  validator?: Function
+  validator?: (el: string) => boolean
 }
 
 function TextInput({variable, setVariable, validator}: TextProps) {
@@ -33,7 +33,7 @@ interface TextArrayProps extends Input {
 }
 
 function TextArrayInput({variable, setVariable, length}: TextArrayProps) {
-  const fields = Array.from({ length }, (_, index) => variable[index] || variable[0])
+  const fields = Array.from({ length }, (_, index) => variable[index])
 
   return (
     <div>
@@ -50,16 +50,19 @@ function TextArrayInput({variable, setVariable, length}: TextArrayProps) {
 interface CheckboxProps extends Input {
   variable: string[]
   id: string
+  handlers: {[k: string]: (c: boolean) => void}
 }
 
-function CheckboxInput({id, variable, setVariable}: CheckboxProps) {
+function CheckboxInput({id, variable, setVariable, handlers}: CheckboxProps) {
   return (
     <>
       <input
         type="checkbox"
         id={id}
-        onClick={e => {
-          const checked = (e.target as HTMLInputElement).checked
+        onClick={el => {
+          const checked = (el.target as HTMLInputElement).checked
+          if (handlers[id]) handlers[id](checked)
+
           if (checked) setVariable([...variable, id])
           else setVariable(variable.filter(item => item !== id))
         }}
