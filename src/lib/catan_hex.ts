@@ -1,4 +1,4 @@
-import Hex from './hex';
+import Hex from './hex'
 
 type Resource = 'wood' | 'clay' | 'wheat' | 'sheep' | 'stone' | 'desert'
 

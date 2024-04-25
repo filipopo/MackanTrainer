@@ -5,27 +5,40 @@ class CatanField extends HexField {
   constructor(pointA: number[], deserts: number[][], public board: Array<CatanHex>[]) {
     super(board)
 
-    const a = this.board[pointA[0]][pointA[1]]
-    if (!a) throw 'Point A not found'
+    const boardWidth = this.board[Math.floor(this.board.length / 2)].length
+    if (!this.pointMapping[boardWidth])
+      return
 
-    let point = 0
+    if (!this.dirMap().includes(pointA.join(' ')))
+      pointA = [0, 0]
+
+    const a = this.board[pointA[0]][pointA[1]]
     const hexes = this.inward_spiral(a, this.dirMap().indexOf(pointA.join(' ')))
+    let num = 0
 
     for (let hex of hexes as CatanHex[]) {
       if (deserts.every(desert => (
         desert.some((e, i) => e !== this.cordsToIndex(...hex.cords)[i])
       ))) {
-        if (this.pointMapping[point]) hex.number = this.pointMapping[point++]
+        if (this.pointMapping[boardWidth][num])
+          hex.number = this.pointMapping[boardWidth][num++]
       }
     }
   }
 
-  public static makeBoard(boardSize: number) {
+  public static makeBoard(boardWidth: number) {
     const board: Array<CatanHex>[] = []
 
-    for (let r = 0; r < 2 * boardSize - 5; r++) {
-      const offset = Math.floor(boardSize / 2) - r
-      board.push(Array.from({ length: boardSize - Math.abs(offset) }, (_, col) => (
+    if (boardWidth % 2 === 1) {
+      for (let row of HexField.makeBoard(Math.floor(boardWidth / 2)))
+        board.push(row.map(hex => new CatanHex(...hex.cords)))
+      return board
+    }
+
+    const size = 2 * boardWidth - 5
+    for (let r = 0; r < size; r++) {
+      const offset = (size - 1) / 2 - r
+      board.push(Array.from({ length: boardWidth - Math.abs(offset) }, (_, col) => (
         new CatanHex(col + Math.max(0, offset), r)
       )))
     }
@@ -33,17 +46,21 @@ class CatanField extends HexField {
     return board
   }
 
-  private pointMapping = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11]
+  private pointMapping: {[k: number]: number[]} = {
+    5: [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11],
+    6: [2, 5, 4, 6, 3, 9, 8, 11, 11, 10, 6, 3, 8, 4, 8, 10, 11, 12, 10, 5, 4, 9, 5, 9, 12, 3, 2, 6],
+    7: [2, 5, 4, 6, 3, 9, 8, 11, 11, 10, 6, 3, 8, 4, 8, 10, 11, 12, 10, 5, 4, 9, 5, 9, 12, 3, 2, 6, 3, 4, 6, 5, 9, 8, 10]
+  }
 
   public dirMap() {
     const mid = Math.floor(this.board.length / 2)
     const end = this.board.length - 1
-    const midSize = (this.board.length + 5) / 2 - 1 // boardSize - 1
+    const midLen = this.board[mid].length - 1
 
     return [
       `${end} 0`,
       `${end} 2`,
-      `${mid} ${midSize}`,
+      `${mid} ${midLen}`,
       '0 2',
       '0 0',
       `${mid} 0`,

@@ -1,19 +1,16 @@
 import { useState } from 'preact/hooks'
 
 import { Catan, CatanBoard, Extension } from './components/catan.tsx'
-import { TextInput, TextArrayInput, CheckboxInput } from './components/input.tsx'
+import { TextInput, TextArrayInput, SelectInput, CheckboxInput } from './components/input.tsx'
 import './app.css'
 
 export function App() {
   const [pointA, setPointA] = useState([0, 0])
   const [deserts, setDeserts] = useState([[2, 2]])
+  const [players, setPlayers] = useState(3)
 
   const [extensions, setExtensions] = useState<Extension[]>([])
-  const handlers: {[k: string]: (c: boolean) => void} = {
-    '6p': c => c ? setDeserts(Array(2).fill(deserts[0])) : setDeserts(deserts.slice(0, 1))
-  }
-
-  const catan = new Catan({pointA, deserts, extensions})
+  const catan = new Catan({pointA, deserts, players, extensions})
   return (
     <>
       Point A<br/>
@@ -23,9 +20,12 @@ export function App() {
       Desert indexes<br/>
       <TextArrayInput variable={deserts} setVariable={setDeserts} />
 
+      Players: <SelectInput variable={players} values={[2, 3, 4, 5, 6, 7, 8]} setVariable={setPlayers}
+      handler={p => p > 4 ? setDeserts(Array(2).fill(deserts[0])) : setDeserts(deserts.slice(0, 1))} /><br/>
+
       Extensions:<br/>
-      {['6p', 'ck', 'sf'].map(id => (
-        <CheckboxInput key={id} id={id} variable={extensions} setVariable={setExtensions} handler={handlers[id]} />
+      {['ck', 'sf'].map(id => (
+        <CheckboxInput key={id} id={id} variable={extensions} setVariable={setExtensions} />
       ))}
 
       <CatanBoard catan={catan} />

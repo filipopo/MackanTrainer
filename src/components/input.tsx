@@ -46,13 +46,32 @@ function TextArrayInput({variable, setVariable}: TextArrayProps) {
   )
 }
 
+interface SelectProps extends Input {
+  variable: number
+  values: number[]
+  handler: (p: number) => void
+}
+
+function SelectInput({variable, values, handler, setVariable}: SelectProps) {
+  return (
+    <select onChange={e => {
+      const p = Number((e.target as HTMLInputElement).value)
+      handler(p)
+      setVariable(p)
+    }}>
+      {values.map((p: number) => (
+        <option value={p} selected={p === variable}>{p}</option>
+      ))}
+    </select>
+  )
+}
+
 interface CheckboxProps extends Input {
   variable: string[]
   id: string
-  handler?: (c: boolean) => void
 }
 
-function CheckboxInput({id, variable, setVariable, handler}: CheckboxProps) {
+function CheckboxInput({id, variable, setVariable}: CheckboxProps) {
   return (
     <>
       <input
@@ -60,8 +79,6 @@ function CheckboxInput({id, variable, setVariable, handler}: CheckboxProps) {
         id={id}
         onClick={el => {
           const checked = (el.target as HTMLInputElement).checked
-          if (handler) handler(checked)
-
           if (checked) setVariable([...variable, id])
           else setVariable(variable.filter(item => item !== id))
         }}
@@ -71,4 +88,4 @@ function CheckboxInput({id, variable, setVariable, handler}: CheckboxProps) {
   )
 }
 
-export {TextInput, TextArrayInput, CheckboxInput}
+export {TextInput, TextArrayInput, SelectInput, CheckboxInput}

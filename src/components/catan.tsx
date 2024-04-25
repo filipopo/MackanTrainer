@@ -4,16 +4,19 @@ function CatanBoard({catan}: {catan: Catan}) {
   return (
     <div className='card'>
       The Catan board:
-      {catan.field.board.map(row => (
-        <div>
-          {row.map(hex => hex.number).join(' ')}
-          <br/>
-        </div>
-      ))}
+      {catan.field.board.map(row => {
+        const val = row.map(hex => hex.number).join(' ')
+        return (
+          <div key={val}>
+            {val}
+            <br/>
+          </div>
+        )
+      })}
       <br/>
       Top buildable spots:
       {catan.buildSpots.map(row => (
-        <div>
+        <div key={row[0]}>
           {row.join(' - ')}
           <br/>
         </div>
@@ -22,18 +25,19 @@ function CatanBoard({catan}: {catan: Catan}) {
   )
 }
 
-type Extension = '6p' | 'ck' | 'sf'
+type Extension = 'ck' | 'sf'
 
 interface CatanProps {
   pointA: number[]
   deserts: number[][]
+  players: number
   extensions?: Extension[]
 }
 
 class Catan {
-  public constructor({pointA, deserts, extensions = []}: CatanProps) {
-    const boardSize = extensions.includes('6p') ? 6 : 5
-    this.field = new CatanField(pointA, deserts, CatanField.makeBoard(boardSize))
+  public constructor({pointA, deserts, players}: CatanProps) {
+    const boardWidth = Math.max(Math.ceil(players / 2) + 3, 5)
+    this.field = new CatanField(pointA, deserts, CatanField.makeBoard(boardWidth))
     this.buildSpots = this.field.buildSpots()
   }
 
