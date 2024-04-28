@@ -15,7 +15,7 @@ export function App() {
     <>
       Point A<br/>
       <TextInput variable={pointA} setVariable={setPointA}
-        validator={(el: string) => catan.field.dirMap().includes(el)} />
+        validator={(el: string) => catan.field.corners().includes(el)} />
 
       Desert indexes<br/>
       <TextArrayInput variable={deserts} setVariable={setDeserts} />

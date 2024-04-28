@@ -9,16 +9,16 @@ class CatanField extends HexField {
     if (!this.pointMapping[boardWidth])
       return
 
-    if (!this.dirMap().includes(pointA.join(' ')))
+    if (!this.corners().includes(pointA.join(' ')))
       pointA = [0, 0]
 
     const a = this.board[pointA[0]][pointA[1]]
-    const hexes = this.inward_spiral(a, this.dirMap().indexOf(pointA.join(' ')))
+    const hexes = this.inwardSpiral(a, this.corners().indexOf(pointA.join(' ')))
     let num = 0
 
     for (let hex of hexes as CatanHex[]) {
       if (deserts.every(desert => (
-        desert.some((e, i) => e !== this.cordsToIndex(...hex.cords)[i])
+        desert.some((e, i) => e !== this.cordsToIndex(hex.cords)[i])
       ))) {
         if (this.pointMapping[boardWidth][num])
           hex.number = this.pointMapping[boardWidth][num++]
@@ -29,7 +29,7 @@ class CatanField extends HexField {
   public static makeBoard(boardWidth: number) {
     const board: Array<CatanHex>[] = []
 
-    if (boardWidth % 2 === 1) {
+    if (boardWidth > 6 && boardWidth % 2 === 1) {
       for (let row of HexField.makeBoard(Math.floor(boardWidth / 2)))
         board.push(row.map(hex => new CatanHex(...hex.cords)))
       return board
@@ -50,21 +50,6 @@ class CatanField extends HexField {
     5: [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11],
     6: [2, 5, 4, 6, 3, 9, 8, 11, 11, 10, 6, 3, 8, 4, 8, 10, 11, 12, 10, 5, 4, 9, 5, 9, 12, 3, 2, 6],
     7: [2, 5, 4, 6, 3, 9, 8, 11, 11, 10, 6, 3, 8, 4, 8, 10, 11, 12, 10, 5, 4, 9, 5, 9, 12, 3, 2, 6, 3, 4, 6, 5, 9, 8, 10]
-  }
-
-  public dirMap() {
-    const mid = Math.floor(this.board.length / 2)
-    const end = this.board.length - 1
-    const midLen = this.board[mid].length - 1
-
-    return [
-      `${end} 0`,
-      `${end} 2`,
-      `${mid} ${midLen}`,
-      '0 2',
-      '0 0',
-      `${mid} 0`,
-    ]
   }
 
   public buildSpots() {

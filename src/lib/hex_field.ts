@@ -1,4 +1,4 @@
-import Hex from './hex'
+import Hex, {Cords} from './hex'
 
 class HexField {
   constructor(public board: Array<Hex>[]) {}
@@ -15,25 +15,40 @@ class HexField {
     return board
   }
 
-  public cordsToIndex(q: number, r: number, s = -q - r) {
-    if (q + r + s !== 0) throw 'q + r + s must be 0'
+  public cordsToIndex(cords: Cords) {
+    if (cords.reduce((a, c) => a + c) !== 0) throw 'q + r + s must be 0'
 
     const half = Math.floor(this.board.length / 2)
-    const col = r >= half ? q : q - half + r
+    const col = cords[1] < half ? cords[0] - half + cords[1] : cords[0]
 
-    return [r, col]
+    return [cords[1], col]
   }
 
   public getHex(q: number, r: number, s = -q - r) {
-    const col = this.cordsToIndex(q, r, s)[1]
+    const col = this.cordsToIndex([q, r, s])[1]
     if (this.board[r] && this.board[r][col])
       return this.board[r][col]
 
     return false
   }
 
-  public inward_spiral(hex: Hex, direction = 4) {
-    let path: Hex[] = [hex]
+  // Also serves as a map to direct inwardSpiral i.e corners().indexof('0 0') === 4
+  public corners() {
+    const mid = Math.floor(this.board.length / 2)
+    const end = this.board.length - 1
+
+    return [
+      `${end} 0`,
+      `${end} ${this.board[0].length}`,
+      `${mid} ${this.board[mid].length - 1}`,
+      `0 ${this.board[0].length}`,
+      '0 0',
+      `${mid} 0`,
+    ]
+  }
+
+  public inwardSpiral(hex: Hex, direction = 4) {
+    let path = [hex]
     const rings = (this.board.length - 1) / 2 + 1 // N + 1
 
     for (let c = 0; c < rings; c++)

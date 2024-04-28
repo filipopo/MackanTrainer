@@ -22,6 +22,22 @@ class Hex {
     return Hex.directions[direction]
   }
 
+  public static round(diff: Cords): Cords {
+    const rounded = diff.map((e, i) => {
+      diff[i] = Math.abs((e = Math.round(e)) - diff[i])
+      return e
+    }) as Cords
+
+    if (diff[0] > diff[1] && diff[0] > diff[1])
+      rounded[0] = -rounded[1] - rounded[2]
+    else if (diff[1] > diff[2])
+      rounded[1] = -rounded[0] - rounded[2]
+    else
+      rounded[2] = -rounded[0] - rounded[1]
+
+    return rounded
+  }
+
   public equals(target: Hex) {
     return this.cords.every((e, i) => e === target.cords[i])
   }
