@@ -78,12 +78,13 @@ class CatanField extends HexField {
     const buildSpots: [string, number][] = []
 
     for (let combination of buildHexes) {
-      const key = combination.join(' ')
-      const value = +(combination.reduce((acc, cur) => (
-        cur ? acc + 6 - Math.abs(cur - 7) : 0
-      ), 0) / 36 * 100).toFixed(2)
+      let key = ''
+      const value = +(combination.reduce((acc, cur) => {
+        key += `${cur} `
+        return cur ? acc + 6 - Math.abs(cur - 7) : 0
+      }, 0) / 36 * 100).toFixed(2)
 
-      buildSpots.push([key, value])
+      buildSpots.push([key.trimEnd(), value])
     }
 
     buildSpots.sort((first, second) => second[1] - first[1])

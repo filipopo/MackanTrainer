@@ -7,4 +7,4 @@ class CatanHex extends Hex {
   public resource: Resource = 'desert'
 }
 
-export default CatanHex
+export {CatanHex as default, type Resource}

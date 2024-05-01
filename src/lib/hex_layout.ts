@@ -1,16 +1,26 @@
-import Hex, { Cords } from './hex'
-
-type Pixel = [number, number]
+import Hex from './hex'
 
 class Point {
   constructor (public x: number, public y: number) {}
 
-  public add(x: number, y: number) {
-    return new Point(this.x + x, this.y + y)
+  public toString() {
+    return `${this.x},${this.y}`
   }
 
-  public multiply(x: number, y: number) {
-    return new Point(this.x * x, this.y * y)
+  public add(p: Point) {
+    return new Point(this.x + p.x, this.y + p.y)
+  }
+
+  public subtract(p: Point) {
+    return new Point(this.x + p.x, this.y + p.y)
+  }
+
+  public multiply(p: Point) {
+    return new Point(this.x * p.x, this.y * p.y)
+  }
+
+  public divide(p: Point) {
+    return new Point(this.x / p.x, this.y / p.y)
   }
 }
 
@@ -25,13 +35,7 @@ class Orientation {
 }
 
 class Layout {
-    constructor (public o: Orientation, size: Pixel, root: Pixel) {
-      this.size = new Point(...size)
-      this.root = new Point(...root)
-    }
-
-    public size: Point
-    public root: Point
+    constructor (public o: Orientation, public size: Point, public root: Point) {}
 
     public static pointy = new Orientation(
       [Math.sqrt(3), Math.sqrt(3) / 2],
@@ -50,35 +54,30 @@ class Layout {
     )
 
     public hexToPixel(h: Hex) {
-      const x = this.o.fx.reduce((a, c, i) => a + c * h.cords[i]) * this.size.x
-      const y = this.o.fy.reduce((a, c, i) => a + c * h.cords[i]) * this.size.y
-      return this.root.add(x, y)
+      const [x, y] = [this.o.fx, this.o.fy].map(m => m[0] * h.cords[0] + m[1] * h.cords[1])
+      return this.root.add(this.size.multiply(new Point(x, y)))
     }
 
-    public pixelToHex(p: Pixel): Cords {
-      const pt = new Point((p[0] - this.root.x) / this.size.x, (p[1] - this.root.y) / this.size.y)
-      const q = this.o.bq[0] * pt.x + this.o.bq[1] * pt.y
-      const r = this.o.br[0] * pt.x + this.o.br[1] * pt.y
-
+    public pixelToHex(p: Point) {
+      p = p.subtract(this.root).divide(this.size)
+      const [q, r] = [this.o.bq, this.o.br].map(m => m[0] * p.x + m[1] * p.y)
       return Hex.round([q, r, -q - r])
     }
 
     public hexCornerOffset(corner: number) {
       const angle = 2 * Math.PI * (this.o.start_angle - corner) / 6
-      return this.size.multiply(Math.cos(angle), Math.sin(angle))
+      return this.size.multiply(new Point(Math.cos(angle), Math.sin(angle)))
     }
 
     public polygonCorners(h: Hex) {
-      const corners: Point[] = []
+      let corners = ''
       const center = this.hexToPixel(h)
 
-      for (var i = 0; i < 6; i++) {
-        const offset = this.hexCornerOffset(i)
-        corners.push(center.add(offset.x, offset.y))
-      }
+      for (var i = 0; i < 6; i++)
+        corners += `${center.add(this.hexCornerOffset(i))} `
 
-      return corners
+      return corners.trimEnd()
     }
 }
 
-export default Layout
+export {Point, Layout}

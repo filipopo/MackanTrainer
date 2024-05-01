@@ -22,20 +22,17 @@ class Hex {
     return Hex.directions[direction]
   }
 
-  public static round(diff: Cords): Cords {
-    const rounded = diff.map((e, i) => {
-      diff[i] = Math.abs((e = Math.round(e)) - diff[i])
-      return e
+  public static round(target: Cords) {
+    let maxIndex = 0, maxVal = 0, sum = 0
+
+    target = target.map((e, i) => {
+      const diff = Math.abs((e = Math.round(e)) - target[i])
+      if (diff > maxVal) [maxIndex, maxVal] = [i, diff]
+      return sum += e, e
     }) as Cords
 
-    if (diff[0] > diff[1] && diff[0] > diff[1])
-      rounded[0] = -rounded[1] - rounded[2]
-    else if (diff[1] > diff[2])
-      rounded[1] = -rounded[0] - rounded[2]
-    else
-      rounded[2] = -rounded[0] - rounded[1]
-
-    return rounded
+    target[maxIndex] -= sum
+    return target
   }
 
   public equals(target: Hex) {
@@ -55,7 +52,7 @@ class Hex {
   }
 
   public len() {
-    return this.cords.reduce((acc, cur) => acc + Math.abs(cur)) / 2
+    return this.cords.reduce((a, c) => a + Math.abs(c), 0) / 2
   }
 
   public distance(target: Cords) {
