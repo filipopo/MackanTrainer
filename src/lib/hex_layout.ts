@@ -73,7 +73,7 @@ class Layout {
       let corners = ''
       const center = this.hexToPixel(h)
 
-      for (var i = 0; i < 6; i++)
+      for (let i = 0; i < 6; i++)
         corners += `${center.add(this.hexCornerOffset(i))} `
 
       return corners.trimEnd()

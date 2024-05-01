@@ -1,7 +1,9 @@
 import Hex, {Cords} from './hex'
 
 class HexField {
-  constructor(public board: Array<Hex>[]) {}
+  constructor(public board: Array<Hex>[]) {
+    this.midRow = Math.floor(this.board.length / 2)
+  }
 
   public static makeBoard(N: number) {
     const board: Array<Hex>[] = []
@@ -15,12 +17,11 @@ class HexField {
     return board
   }
 
+  public midRow
+
   public cordsToIndex(cords: Cords) {
     if (cords.reduce((a, c) => a + c) !== 0) throw 'q + r + s must be 0'
-
-    const half = Math.floor(this.board.length / 2)
-    const col = cords[1] < half ? cords[0] - half + cords[1] : cords[0]
-
+    const col = cords[1] < this.midRow ? cords[0] - this.midRow + cords[1] : cords[0]
     return [cords[1], col]
   }
 
@@ -34,16 +35,14 @@ class HexField {
 
   // Also serves as a map to direct inwardSpiral i.e corners().indexof('0 0') === 4
   public corners() {
-    const mid = Math.floor(this.board.length / 2)
     const end = this.board.length - 1
-
     return [
       `${end} 0`,
       `${end} ${this.board[0].length}`,
-      `${mid} ${this.board[mid].length - 1}`,
+      `${this.midRow} ${this.board[this.midRow].length - 1}`,
       `0 ${this.board[0].length}`,
       '0 0',
-      `${mid} 0`,
+      `${this.midRow} 0`,
     ]
   }
 

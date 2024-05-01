@@ -5,7 +5,7 @@ class CatanField extends HexField {
   constructor(pointA: number[], deserts: number[][], public board: Array<CatanHex>[]) {
     super(board)
 
-    const boardWidth = this.board[Math.floor(this.board.length / 2)].length
+    const boardWidth = this.board[this.midRow].length
     if (!this.pointMapping[boardWidth])
       return
 
