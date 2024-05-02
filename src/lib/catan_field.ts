@@ -55,14 +55,14 @@ class CatanField extends HexField {
   public buildSpots() {
     let buildHexes: number[][] | Set<string> = new Set<string>()
 
-    for (let i = 0; i < this.board.length; i++) {
-      for (let j = 0; j < this.board[i].length; j++) {
+    for (let row of this.board) {
+      for (let hex of row) {
         for (let direction = 0; direction < 6; direction++) {
-          const combination = [this.board[i][j].number]
+          const combination = [hex.number]
 
           for (let intersection of [direction, direction + 1]) {
-            const hex = this.getHex(...this.board[i][j].neighbor(intersection))
-            if (hex) combination.push((hex as CatanHex).number)
+            const hexn = this.getHex(...hex.neighbor(intersection))
+            if (hexn) combination.push((hexn as CatanHex).number)
           }
 
           combination.sort((a, b) => a - b)
