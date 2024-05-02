@@ -1,10 +1,10 @@
 import { useState } from 'preact/hooks'
+import { TextInput, TextArrayInput, SelectInput, CheckboxInput } from './components/input.tsx'
 
 import { Catan, CatanBoard, Extension } from './components/catan.tsx'
-import { TextInput, TextArrayInput, SelectInput, CheckboxInput } from './components/input.tsx'
 import './app.css'
 
-export function App() {
+function App() {
   const [pointA, setPointA] = useState([0, 0])
   const [deserts, setDeserts] = useState([[2, 2]])
   const [players, setPlayers] = useState(3)
@@ -26,9 +26,12 @@ export function App() {
       Extensions:<br/>
       {['ck', 'sf'].map(id => (
         <CheckboxInput key={id} id={id} variable={extensions} setVariable={setExtensions} />
-      ))}
+      ))}<br/>
+      <br/>
 
       <CatanBoard catan={catan} />
     </>
   )
 }
+
+export default App

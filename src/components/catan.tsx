@@ -1,6 +1,8 @@
-import { Resource } from '../lib/catan_hex'
 import { Point, Layout } from '../lib/hex_layout'
+import { Resource } from '../lib/catan_hex'
+
 import CatanField from '../lib/catan_field'
+import './catan.css'
 
 function CatanBoard({catan}: {catan: Catan}) {
   const resColor: {[k in Resource]: string} = {
@@ -12,22 +14,22 @@ function CatanBoard({catan}: {catan: Catan}) {
     'desert': '#ECC9AF'
   }
 
-  const layout = new Layout(Layout.pointy, new Point(20, 20), new Point(45, 20))
-  //const w = 42.7 * catan.field.board[catan.field.midRow].length
-  const h = 3 / 2 * 24 * catan.field.board.length - 12
+  const layout = new Layout(Layout.pointy, new Point(20, 20), new Point(-18, 20))
+  const w = Math.sqrt(3) * 20 * catan.field.board[catan.field.midRow].length
+  const h = 30 * catan.field.board.length + 10
 
   return (
-    <div className="card">
+    <>
       The Catan board:<br/>
-      <svg /*width={w}*/ height={h} xmlns="http://www.w3.org/2000/svg">
+      <svg width={w} height={h} xmlns="http://www.w3.org/2000/svg">
         {catan.field.board.map(row => (
           row.map(hex => {
             const p = layout.polygonCorners(hex)
             const t = layout.hexToPixel(hex)
             return (
               <g>
-                <polygon points={p} style={`fill:${resColor[hex.resource]};stroke:black;stroke-width:2`} />
-                <text x={t.x} y={t.y + 10} text-anchor="middle" fill="white" font-size="25">{hex.number}</text>
+                <polygon fill={resColor[hex.resource]} points={p} />
+                <text x={t.x} y={t.y + 10}>{hex.number}</text>
               </g>
             )
           })
@@ -41,7 +43,7 @@ function CatanBoard({catan}: {catan: Catan}) {
           <br/>
         </div>
       ))}
-    </div>
+    </>
   )
 }
 

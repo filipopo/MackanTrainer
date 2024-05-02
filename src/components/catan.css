@@ -1,0 +1,10 @@
+polygon {
+  stroke: black;
+}
+
+text {
+  text-anchor: middle;
+  fill: white;
+  font-size: 25px;
+  user-select: none;
+}
