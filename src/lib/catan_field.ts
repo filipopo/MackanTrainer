@@ -82,7 +82,7 @@ class CatanField extends HexField {
       const value = +(combination.reduce((acc, cur) => {
         key += `${cur} `
         return cur ? acc + 6 - Math.abs(cur - 7) : 0
-      }, 0) / 36 * 100).toFixed(2)
+      }, 0) / 0.36).toFixed(2)
 
       buildSpots.push([key.trimEnd(), value])
     }

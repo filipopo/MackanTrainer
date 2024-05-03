@@ -7,9 +7,10 @@ class HexField {
 
   public static makeBoard(N: number) {
     const board: Array<Hex>[] = []
+    const size = 2*N + 1
 
-    for (let r = 0; r < 2*N + 1; r++) {
-      board.push(Array.from({ length: 2*N + 1 - Math.abs(N - r) }, (_, col) => (
+    for (let r = 0; r < size; r++) {
+      board.push(Array.from({ length: size - Math.abs(N - r) }, (_, col) => (
         new Hex(col + Math.max(0, N - r), r)
       )))
     }

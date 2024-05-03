@@ -14,7 +14,7 @@ function CatanBoard({catan}: {catan: Catan}) {
     'desert': '#ECC9AF'
   }
 
-  const wtf = (catan.field.board.length - 3) * -8.75
+  const wtf = (catan.field.midRow - 1) * Math.sqrt(3) * -10
   const layout = new Layout(Layout.pointy, new Point(20, 20), new Point(wtf, 20))
   const w = Math.sqrt(3) * 20 * catan.field.board[catan.field.midRow].length
   const h = 30 * catan.field.board.length + 10
