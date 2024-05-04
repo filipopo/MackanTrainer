@@ -36,12 +36,14 @@ class HexField {
 
   // Also serves as a map to direct inwardSpiral i.e corners().indexof('0 0') === 4
   public corners() {
+    const start = this.board[0].length - 1
     const end = this.board.length - 1
+
     return [
       `${end} 0`,
-      `${end} ${this.board[0].length}`,
+      `${end} ${start}`,
       `${this.midRow} ${this.board[this.midRow].length - 1}`,
-      `0 ${this.board[0].length}`,
+      `0 ${start}`,
       '0 0',
       `${this.midRow} 0`,
     ]
