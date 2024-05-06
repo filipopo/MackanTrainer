@@ -21,7 +21,6 @@ function CatanBoard({catan}: {catan: Catan}) {
 
   return (
     <>
-      The Catan board:<br/>
       <svg width={w} height={h} xmlns="http://www.w3.org/2000/svg">
         {catan.field.board.map(row => (
           row.map(hex => {
@@ -54,13 +53,14 @@ interface CatanProps {
   pointA: number[]
   deserts: number[][]
   players: number
+  resources: Resource[]
   extensions?: Extension[]
 }
 
 class Catan {
-  public constructor({pointA, deserts, players}: CatanProps) {
+  public constructor({pointA, deserts, players, resources}: CatanProps) {
     const boardWidth = Math.max(Math.ceil(players / 2) + 3, 5)
-    this.field = new CatanField(pointA, deserts, CatanField.makeBoard(boardWidth))
+    this.field = new CatanField(pointA, deserts, CatanField.makeBoard(boardWidth), resources)
     this.buildSpots = this.field.buildSpots()
   }
 

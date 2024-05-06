@@ -1,8 +1,13 @@
-import CatanHex from './catan_hex'
+import CatanHex, { Resource } from './catan_hex'
 import HexField from './hex_field'
 
 class CatanField extends HexField {
-  constructor(pointA: number[], deserts: number[][], public board: Array<CatanHex>[]) {
+  constructor(
+    public pointA: number[],
+    public deserts: number[][],
+    public board: Array<CatanHex>[],
+    resources: Resource[])
+  {
     super(board)
 
     const boardWidth = this.board[this.midRow].length
@@ -12,16 +17,17 @@ class CatanField extends HexField {
     if (!this.corners().includes(pointA.join(' ')))
       pointA = [0, 0]
 
-    const a = this.board[pointA[0]][pointA[1]]
-    const hexes = this.inwardSpiral(a, this.corners().indexOf(pointA.join(' ')))
+    const hexes = this.inwardSpiral(this.board[pointA[0]][pointA[1]], this.corners().indexOf(pointA.join(' ')))
     let num = 0
 
     for (let hex of hexes as CatanHex[]) {
       if (deserts.every(desert => (
         desert.some((e, i) => e !== this.cordsToIndex(hex.cords)[i])
       ))) {
-        if (this.pointMapping[boardWidth][num])
+        if (this.pointMapping[boardWidth][num]) {
+          hex.resource = resources[num] || 'desert'
           hex.number = this.pointMapping[boardWidth][num++]
+        }
       }
     }
   }
@@ -44,6 +50,38 @@ class CatanField extends HexField {
     }
 
     return board
+  }
+
+  public randomise() {
+    const resourceAmount: {[k: number]: {[k in Resource]?: number}} = {
+      5: {'wood': 4, 'clay': 3, 'wheat': 4, 'sheep': 4, 'stone': 3},
+      6: {'wood': 6, 'clay': 5, 'wheat': 6, 'sheep': 6, 'stone': 5},
+      7: {'wood': 8, 'clay': 6, 'wheat': 7, 'sheep': 8, 'stone': 6}
+    }
+
+    const resources: Resource[] = []
+    const boardWidth = this.board[this.midRow].length
+
+    for (const [resource, quantity] of Object.entries(resourceAmount[boardWidth])) {
+      for (let i = 0; i < quantity; i++)
+        resources.push(resource as Resource)
+    }
+
+    // Shuffle array
+    for (let i = resources.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [resources[i], resources[j]] = [resources[j], resources[i]];
+    }
+
+    const randomPoint = this.corners()[Math.floor(Math.random() * 6)]
+    const randomDesert = []
+
+    for (let i = 0; i < this.deserts.length; i++) {
+      randomDesert.push([Math.floor(Math.random() * this.board.length)])
+      randomDesert[i].push(Math.floor(Math.random() * this.board[randomDesert[i][0]].length))
+    }
+
+    return [randomPoint.split(' ').map(e => Number(e)), randomDesert, resources]
   }
 
   private pointMapping: {[k: number]: number[]} = {
