@@ -29,7 +29,7 @@ function CatanBoard({catan}: {catan: Catan}) {
             return (
               <g>
                 <polygon fill={resColor[hex.resource]} points={p} />
-                <text x={t.x} y={t.y + 10}>{hex.number}</text>
+                <text fill={[6, 8].includes(hex.number) ? 'red' : 'white'} x={t.x} y={t.y + 10}>{hex.number}</text>
               </g>
             )
           })
