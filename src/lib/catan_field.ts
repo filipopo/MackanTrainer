@@ -6,21 +6,22 @@ class CatanField extends HexField {
     public pointA: number[],
     public deserts: number[][],
     public board: Array<CatanHex>[],
-    resources: Resource[])
-  {
+    resources: Resource[]
+  ) {
     super(board)
 
+    const a = pointA.join(' ')
+    if (!this.corners().includes(a))
+      pointA = [0, 0]
+
+    this.hexes = this.inwardSpiral(this.board[pointA[0]][pointA[1]], this.corners().indexOf(a)) as CatanHex[]
     const boardWidth = this.board[this.midRow].length
+
     if (!this.pointMapping[boardWidth])
       return
 
-    if (!this.corners().includes(pointA.join(' ')))
-      pointA = [0, 0]
-
-    const hexes = this.inwardSpiral(this.board[pointA[0]][pointA[1]], this.corners().indexOf(pointA.join(' ')))
     let num = 0
-
-    for (let hex of hexes as CatanHex[]) {
+    for (const hex of this.hexes) {
       if (deserts.every(desert => (
         desert.some((e, i) => e !== this.cordsToIndex(hex.cords)[i])
       ))) {
@@ -36,7 +37,7 @@ class CatanField extends HexField {
     const board: Array<CatanHex>[] = []
 
     if (boardWidth > 6 && boardWidth % 2 === 1) {
-      for (let row of HexField.makeBoard(Math.floor(boardWidth / 2)))
+      for (const row of HexField.makeBoard(Math.floor(boardWidth / 2)))
         board.push(row.map(hex => new CatanHex(...hex.cords)))
       return board
     }
@@ -51,6 +52,8 @@ class CatanField extends HexField {
 
     return board
   }
+
+  public hexes
 
   public randomise() {
     const resourceAmount: {[k: number]: {[k in Resource]?: number}} = {
@@ -93,29 +96,27 @@ class CatanField extends HexField {
   public buildSpots() {
     let buildHexes: number[][] | Set<string> = new Set<string>()
 
-    for (let row of this.board) {
-      for (let hex of row) {
-        for (let direction = 0; direction < 6; direction++) {
-          const combination = [hex.number]
+    for (const hex of this.hexes) {
+      for (let direction = 0; direction < 6; direction++) {
+        const combination = [hex.number]
 
-          for (let intersection of [direction, direction + 1]) {
-            const hexn = this.getHex(...hex.neighbor(intersection))
-            if (hexn) combination.push((hexn as CatanHex).number)
-          }
-
-          combination.sort((a, b) => a - b)
-          const hashedCombination = combination.join(' ')
-
-          if (!buildHexes.has(hashedCombination))
-            buildHexes.add(hashedCombination)
+        for (const intersection of [direction, direction + 1]) {
+          const hexn = this.getHex(...hex.neighbor(intersection))
+          if (hexn) combination.push((hexn as CatanHex).number)
         }
+
+        combination.sort((a, b) => a - b)
+        const hashedCombination = combination.join(' ')
+
+        if (!buildHexes.has(hashedCombination))
+          buildHexes.add(hashedCombination)
       }
     }
 
     buildHexes = Array.from(buildHexes).map(cords => cords.split(' ').map(e => Number(e)))
     const buildSpots: [string, number][] = []
 
-    for (let combination of buildHexes) {
+    for (const combination of buildHexes) {
       let key = ''
       const value = +(combination.reduce((acc, cur) => {
         key += `${cur} `
