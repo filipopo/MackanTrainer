@@ -1,0 +1,10 @@
+dialog {
+  background-color: #ffffff99
+}
+
+.modal-close-btn {
+  font-size: 0.75em;
+  position: absolute;
+  top: 0;
+  right: 0;
+}

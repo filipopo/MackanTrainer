@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks'
 import { TextInput, TextArrayInput, SelectInput, CheckboxInput } from './components/input.tsx'
+import { Modal, ModalProps } from './components/modal'
 
 import { Resource } from './lib/catan_hex.ts'
 import { Catan, CatanBoard, Extension } from './components/catan.tsx'
@@ -13,6 +14,45 @@ function App() {
   const [resources, setResources] = useState<Resource[]>([])
   const [extensions, setExtensions] = useState<Extension[]>([])
   const catan = new Catan({pointA, deserts, players, resources, extensions})
+
+  interface HexModalProps extends ModalProps {
+    cords: number[]
+    hexNum: number
+  }
+
+  function HexModal({open, setOpen, cords, hexNum}: HexModalProps) {
+    return (
+      <Modal open={open} setOpen={setOpen}>
+        {catan.field.corners().includes(cords.join(' ')) &&
+        cords.some((e, i) => e !== catan.field.pointA[i]) && <>
+          <button type="button" onClick={() => setPointA(cords)}>Set as point A</button>
+          <br/>
+        </>}
+
+        {deserts.map((desert, i) => (
+          cords.some((e, i) => e !== desert[i]) && <>
+            <button type="button" onClick={() => (
+              setDeserts(deserts.length > 1 ? [desert, cords] : [cords])
+            )}>Set as desert {i + 1}</button>
+            <br/>
+          </>
+        ))}
+        <br/>
+
+        {deserts.every(desert => desert.some((e, i) => e !== cords[i])) &&
+        ['wood', 'clay', 'wheat', 'sheep', 'stone'].map(resource => (
+          resource !== catan.field.board[cords[0]][cords[1]].resource && <>
+            <button type="button" onClick={() => {
+              const temp = [...resources]
+              temp[hexNum] = resource as Resource
+              setResources(temp)
+            }}>Change to {resource}</button>
+            <br/>
+          </>
+        ))}
+      </Modal>
+    )
+  }
 
   return (
     <>
@@ -43,7 +83,7 @@ function App() {
       ))}<br/>
       <br/>
 
-      <CatanBoard catan={catan} />
+      <CatanBoard catan={catan} HexModal={HexModal} />
     </>
   )
 }
