@@ -19,10 +19,6 @@ function Modal({open, setOpen, children}: BaseModal) {
   }
 
   useEffect(() => {
-    setOpen(open)
-  }, [open])
-
-  useEffect(() => {
     const modalElement = modalRef.current;
 
     if (modalElement) {
