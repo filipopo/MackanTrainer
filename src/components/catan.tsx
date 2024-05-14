@@ -1,4 +1,3 @@
-import { useState } from 'preact/hooks'
 import { Point, Layout } from '../lib/hex_layout'
 import { Resource } from '../lib/catan_hex'
 
@@ -7,10 +6,10 @@ import './catan.css'
 
 interface CatanBoardProps {
   catan: Catan
-  HexModal: any
+  hexCallback: (newCords: number[], newNum: number) => void
 }
 
-function CatanBoard({catan, HexModal}: CatanBoardProps) {
+function CatanBoard({catan, hexCallback}: CatanBoardProps) {
   const resColor: {[k in Resource]: string} = {
     'wood': '#7B863D',
     'clay': '#F6A173',
@@ -25,14 +24,9 @@ function CatanBoard({catan, HexModal}: CatanBoardProps) {
   const w = Math.sqrt(3) * 20 * catan.field.board[catan.field.midRow].length
   const h = 30 * catan.field.board.length + 10
 
-  const [open, setOpen] = useState(false)
-  const [cords, setCords] = useState([0, 0])
-  const [hexNum, setHexNum] = useState(0)
   let num = 0
-
   return (
     <>
-      <HexModal open={open} setOpen={setOpen} cords={cords} hexNum={hexNum} />
       <svg width={w} height={h} xmlns="http://www.w3.org/2000/svg">
         {catan.field.hexes.map(hex => {
           const p = layout.polygonCorners(hex)
@@ -40,11 +34,7 @@ function CatanBoard({catan, HexModal}: CatanBoardProps) {
           const temp = hex.number ? num++ : 0
 
           return (
-            <g onClick={() => {
-              setHexNum(temp)
-              setCords(catan.field.cordsToIndex(hex.cords))
-              setOpen(true)
-            }}>
+            <g onClick={() => hexCallback(catan.field.cordsToIndex(hex.cords), temp)}>
               <polygon fill={resColor[hex.resource]} points={p} />
               <text fill={[6, 8].includes(hex.number) ? 'red' : 'white'} x={t.x} y={t.y + 10}>{hex.number}</text>
             </g>

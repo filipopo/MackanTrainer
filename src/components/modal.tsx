@@ -19,7 +19,7 @@ function Modal({open, setOpen, children}: BaseModal) {
   }
 
   useEffect(() => {
-    const modalElement = modalRef.current;
+    const modalElement = modalRef.current
 
     if (modalElement) {
       if (open) modalElement.showModal()

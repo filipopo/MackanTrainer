@@ -54,6 +54,10 @@ function App() {
     )
   }
 
+  const [open, setOpen] = useState(false)
+  const [cords, setCords] = useState([0, 0])
+  const [hexNum, setHexNum] = useState(0)
+
   return (
     <>
       <button type="button" onClick={() => {
@@ -83,7 +87,12 @@ function App() {
       ))}<br/>
       <br/>
 
-      <CatanBoard catan={catan} HexModal={HexModal} />
+      <HexModal open={open} setOpen={setOpen} cords={cords} hexNum={hexNum} />
+      <CatanBoard catan={catan} hexCallback={(newCords: number[], newNum: number) => {
+        setHexNum(newNum)
+        setCords(newCords)
+        setOpen(true)
+      }}/>
     </>
   )
 }
