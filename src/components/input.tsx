@@ -14,12 +14,12 @@ function TextInput({variable, setVariable, validator}: TextProps) {
         type="text"
         value={variable.join(' ')}
         onChange={e => {
-          let el: string | string[] = (e.target as HTMLInputElement).value
+          let el: string | number[] = (e.target as HTMLInputElement).value
           if (validator && !validator(el)) return
 
-          el = el.split(' ')
-          if (el.every(e => !Number.isNaN(Number(e))))
-            setVariable(el.map(str => Number(str)))
+          el = el.split(' ').map(str => Number(str))
+          if (el.every(e => !Number.isNaN(e)))
+            setVariable(el)
         }}
       />
       <br/>
