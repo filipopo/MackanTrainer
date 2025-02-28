@@ -4,7 +4,7 @@ WORKDIR /home/node/app
 
 COPY app .
 
-RUN npm install && \
+RUN npm install --ignore-scripts && \
     npm run build
 
 FROM nginx:alpine-slim
