@@ -23,6 +23,8 @@ function App() {
   function HexModal({open, setOpen, cords, hexNum}: HexModalProps) {
     return (
       <Modal open={open} setOpen={setOpen}>
+        <div class="modal-title">{catan.field.board[cords[0]][cords[1]].resource}</div>
+
         {catan.field.corners().includes(cords.join(' ')) &&
         cords.some((e, i) => e !== catan.field.pointA[i]) && <>
           <button type="button" onClick={() => setPointA(cords)}>Set as point A</button>

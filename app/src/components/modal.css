@@ -2,9 +2,15 @@ dialog {
   background-color: #ffffff99
 }
 
-.modal-close-btn {
+.modal-close-btn, .modal-title {
   font-size: 0.75em;
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.modal-title {
+  left: 0;
+  z-index: -1;
+  font-weight: bold;
 }
