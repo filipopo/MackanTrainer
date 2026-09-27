@@ -39,14 +39,14 @@ class Layout {
 
     public static pointy = new Orientation(
       [Math.sqrt(3), Math.sqrt(3) / 2],
-      [0, 3 / 2],
+      [0, 1.5],
       [Math.sqrt(3) / 3, -1 / 3],
       [0, 2 / 3],
       0.5
     )
 
     public static flat = new Orientation(
-      [3 / 2, 0],
+      [1.5, 0],
       [Math.sqrt(3) / 2, Math.sqrt(3)],
       [2 / 3, 0],
       [-1 / 3, Math.sqrt(3) / 3],
